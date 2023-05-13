@@ -1,6 +1,5 @@
 package ru.myproject.SpringBot.service;
 
-
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -80,7 +79,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                 "/start - получить приветственное сообщение\n" +
                 "/mydata - получить историю запросов\n" +
                 "/deletedata - удалить все мои запросы\n" +
-                "/help - получить подробное описание команд" +
+                "/help - получить подробное описание команд\n" +
                 "/settings - просмотреть текущие настройки\n";
         log.info("Test message");
 
