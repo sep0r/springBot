@@ -1,5 +1,6 @@
 package ru.myproject.SpringBot.service;
 
+import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -94,7 +95,9 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void startCommandReceived(long chatId, String name) {
-        String answer = "Привет " + name + ", рад познакомиться с тобой!";
+
+        String answer = EmojiParser.parseToUnicode("Привет, " + name + ", рад познакомиться с тобой!" + " :wave:");
+//        String answer = "Привет, " + name + ", рад познакомиться с тобой!";
         log.info("Replied to user " + name);
 
         sendMessage(chatId, answer);
