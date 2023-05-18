@@ -2,6 +2,7 @@ package ru.myproject.SpringBot.service;
 
 import com.vdurmont.emoji.EmojiParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -13,6 +14,8 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.myproject.SpringBot.model.Ads;
+import ru.myproject.SpringBot.model.AdsRepository;
 import ru.myproject.SpringBot.model.User;
 import ru.myproject.SpringBot.model.UserRepository;
 
@@ -26,6 +29,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AdsRepository adsRepository;
     final BotConfig config;
 
     public TelegramBot(BotConfig config) {
@@ -60,10 +65,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
-            if(messageText.contains("/send") && config.getOwnerId() == chatId) {
+            if (messageText.contains("/send") && config.getOwnerId() == chatId) {
                 var textToSend = EmojiParser.parseToUnicode(messageText.substring(messageText.indexOf(" ")));
                 var users = userRepository.findAll();
-                for (User user: users){
+                for (User user : users) {
                     sendMessage(user.getChatId(), textToSend);
                 }
             }
@@ -84,7 +89,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private void registerUser(Message msg) {
 
-        if(userRepository.findById(msg.getChatId()).isEmpty()){
+        if (userRepository.findById(msg.getChatId()).isEmpty()) {
 
             var chatId = msg.getChatId();
             var chat = msg.getChat();
@@ -135,5 +140,19 @@ public class TelegramBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             log.error("Error occurred: " + e.getMessage());
         }
+    }
+
+    @Scheduled(cron = "${cron.scheduler}")
+    private void sendAds() {
+
+        var ads = adsRepository.findAll();
+        var users = userRepository.findAll();
+
+        for (Ads ad : ads) {
+            for (User user : users) {
+                sendMessage(user.getChatId(), ad.getAd());
+            }
+        }
+
     }
 }

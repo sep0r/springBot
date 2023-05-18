@@ -1,0 +1,2 @@
+-- INSERT INTO ads_table (id, ad)
+-- VALUES (1, 'тестовый текст');
